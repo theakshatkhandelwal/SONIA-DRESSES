@@ -102,20 +102,25 @@ export default function Header() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm font-semibold md:flex">
+        <nav className="hidden items-end gap-6 text-sm font-semibold md:flex">
           {["Women", "Men", "Kids"].map((category) => (
             <button
               key={category}
               type="button"
               onMouseEnter={() => setActiveMenu(category)}
-              className={`border-b-2 pb-1 uppercase tracking-wider transition-colors ${
+              className={`inline-block border-b-2 pb-1 uppercase tracking-wider transition-colors ${
                 activeMenu === category ? "border-pink-600 text-pink-600" : "border-transparent hover:text-pink-600"
               }`}
             >
               {category}
             </button>
           ))}
-          <Link href="/" className="uppercase tracking-wider transition-colors hover:text-pink-600">
+          <Link
+            href="/"
+            className={`inline-block border-b-2 pb-1 uppercase tracking-wider transition-colors ${
+              pathname === "/" ? "border-pink-600 text-pink-600" : "border-transparent hover:text-pink-600"
+            }`}
+          >
             Home
           </Link>
         </nav>
