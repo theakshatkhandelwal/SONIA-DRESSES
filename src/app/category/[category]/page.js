@@ -73,13 +73,13 @@ export default async function CategoryPage({ params, searchParams }) {
             {products.length} {products.length === 1 ? "product" : "products"}
           </span>
         </h1>
-        <p className="mt-2 max-w-xl text-sm text-zinc-200">Filter &amp; sort like your favourite fashion apps.</p>
+        <p className="mt-2 max-w-xl text-sm text-zinc-200">Browse the grid and sort by newest or price.</p>
       </section>
 
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
         <Suspense fallback={<FiltersSkeleton />}>
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <CategoryFilters categoryLabel={categoryLabel} />
+            <CategoryFilters />
           </div>
         </Suspense>
 
@@ -105,7 +105,7 @@ export default async function CategoryPage({ params, searchParams }) {
               <p className="text-lg font-semibold text-zinc-800">No products match</p>
               <p className="mt-2 text-sm text-zinc-600">
                 {q || listing.sort !== "new" || listing.minPrice != null || listing.maxPrice != null || listing.discountsOnly
-                  ? "Try adjusting filters or search."
+                  ? "Try another search term or change how results are sorted."
                   : "Check back soon for new arrivals in this category."}
               </p>
               <Link href="/" className="mt-6 inline-block text-sm font-semibold text-pink-600 hover:underline">

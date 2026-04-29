@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import HomeHeroMotion from "@/components/react-bits/HomeHeroMotion";
 import EmptyState from "@/components/EmptyState";
 import { connectToDB } from "@/lib/db";
 import { Product } from "@/lib/models/Product";
@@ -37,23 +38,7 @@ export default async function Home() {
           or confirm your database connection in hosting settings.
         </section>
       )}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-black via-zinc-900 to-pink-700 px-6 py-14 text-white md:px-12">
-        <p className="text-sm uppercase tracking-[0.25em] text-pink-200">Sonia Dresses Collection</p>
-        <h1 className="mt-4 max-w-2xl text-4xl font-black leading-tight md:text-6xl">
-          Fashion-first styles inspired by global trends.
-        </h1>
-        <p className="mt-4 max-w-xl text-sm text-zinc-100 md:text-base">
-          Discover bold new drops, festive must-haves, and timeless picks designed to make everyday dressing easy.
-        </p>
-        <div className="mt-7 flex flex-wrap gap-3">
-          <Link href="/category/Women" className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black">
-            Shop Women
-          </Link>
-          <Link href="/category/Kids" className="rounded-full border border-white/40 px-5 py-2 text-sm font-semibold">
-            Shop Kids
-          </Link>
-        </div>
-      </section>
+      <HomeHeroMotion />
 
       <section>
         <div className="mb-4 flex items-center justify-between">

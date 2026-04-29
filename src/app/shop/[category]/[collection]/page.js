@@ -103,14 +103,14 @@ export default async function CollectionPage({ params, searchParams }) {
           </span>
         </h1>
         <p className="mt-2 max-w-xl text-sm text-zinc-200">
-          {categoryLabel} · filter &amp; sort below.
+          {categoryLabel} · sort and search below.
         </p>
       </section>
 
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
         <Suspense fallback={<FiltersSkeleton />}>
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <CategoryFilters categoryLabel={categoryLabel} />
+            <CategoryFilters />
           </div>
         </Suspense>
 
@@ -129,7 +129,7 @@ export default async function CollectionPage({ params, searchParams }) {
           {products.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50/80 px-6 py-16 text-center">
               <p className="text-lg font-semibold text-zinc-800">No matching products</p>
-              <p className="mt-2 text-sm text-zinc-600">Try different filters or search keywords.</p>
+              <p className="mt-2 text-sm text-zinc-600">Try another search keyword or browse the full category.</p>
               <Link href={`/category/${encodeURIComponent(categoryLabel)}`} className="mt-6 inline-block text-sm font-semibold text-pink-600 hover:underline">
                 Browse all {categoryLabel}
               </Link>
