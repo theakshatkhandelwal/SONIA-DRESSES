@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
 
 const NEW_MS = 14 * 24 * 60 * 60 * 1000;
@@ -27,7 +28,10 @@ export default function ProductCard({ product }) {
   function handleQuickAdd(e) {
     e.preventDefault();
     e.stopPropagation();
-    if (!inStock) return;
+    if (!inStock) {
+      toast.error("This item is out of stock.");
+      return;
+    }
     addToCart({
       productId: product._id,
       name: product.name,
@@ -35,6 +39,7 @@ export default function ProductCard({ product }) {
       size,
       price: product.price,
     });
+    toast.success("Added to bag", { description: product.name });
   }
 
   return (

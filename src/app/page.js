@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import EmptyState from "@/components/EmptyState";
 import { connectToDB } from "@/lib/db";
 import { Product } from "@/lib/models/Product";
 import ProductCard from "@/components/ProductCard";
@@ -31,8 +32,9 @@ export default async function Home() {
   return (
     <div className="space-y-12 pb-10">
       {dbError && (
-        <section className="rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Database is unreachable right now. Showing a limited storefront preview.
+        <section className="rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-900">
+          <strong className="font-semibold">Catalog is offline.</strong> We can’t load live products right now. Check back soon,
+          or confirm your database connection in hosting settings.
         </section>
       )}
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-black via-zinc-900 to-pink-700 px-6 py-14 text-white md:px-12">
@@ -85,7 +87,7 @@ export default async function Home() {
               href={card.link}
               className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition hover:shadow-md"
             >
-              <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">Edit</p>
+              <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">Shop</p>
               <h3 className="mt-2 text-xl font-bold">{card.title}</h3>
               <p className="mt-2 text-sm text-zinc-600">{card.subtitle}</p>
             </Link>
@@ -95,20 +97,50 @@ export default async function Home() {
 
       <section>
         <h2 className="mb-4 text-2xl font-bold">Featured Products</h2>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {featuredProducts.map((product) => (
-            <ProductCard key={String(product._id)} product={{ ...product, _id: String(product._id) }} />
-          ))}
-        </div>
+        {dbError ? (
+          <p className="rounded-xl border border-zinc-200 bg-white px-4 py-6 text-center text-sm text-zinc-600">
+            Featured picks will appear here once the catalog is online.
+          </p>
+        ) : featuredProducts.length === 0 ? (
+          <EmptyState
+            title="No featured picks yet"
+            description="Mark products as featured in your admin dashboard — they’ll appear here automatically."
+            actionLabel="Shop Women"
+            actionHref="/category/Women"
+            secondaryLabel="Go to admin"
+            secondaryHref="/admin"
+          />
+        ) : (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {featuredProducts.map((product) => (
+              <ProductCard key={String(product._id)} product={{ ...product, _id: String(product._id) }} />
+            ))}
+          </div>
+        )}
       </section>
 
       <section>
         <h2 className="mb-4 text-2xl font-bold">New In</h2>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {newArrivals.map((product) => (
-            <ProductCard key={String(product._id)} product={{ ...product, _id: String(product._id) }} />
-          ))}
-        </div>
+        {dbError ? (
+          <p className="rounded-xl border border-zinc-200 bg-white px-4 py-6 text-center text-sm text-zinc-600">
+            New arrivals will load here when the database is connected.
+          </p>
+        ) : newArrivals.length === 0 ? (
+          <EmptyState
+            title="New arrivals coming soon"
+            description="When your catalog has products, the latest drops show up here first."
+            actionLabel="Browse Men"
+            actionHref="/category/Men"
+            secondaryLabel="Browse Kids"
+            secondaryHref="/category/Kids"
+          />
+        ) : (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {newArrivals.map((product) => (
+              <ProductCard key={String(product._id)} product={{ ...product, _id: String(product._id) }} />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
