@@ -1,65 +1,115 @@
+import Link from "next/link";
 import Image from "next/image";
+import { connectToDB } from "@/lib/db";
+import { Product } from "@/lib/models/Product";
+import ProductCard from "@/components/ProductCard";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  let dbError = false;
+  let featuredProducts = [];
+  let newArrivals = [];
+  try {
+    await connectToDB();
+    featuredProducts = await Product.find({ featured: true }).limit(8).lean();
+    newArrivals = await Product.find({}).sort({ createdAt: -1 }).limit(4).lean();
+  } catch {
+    dbError = true;
+  }
+  const trendCards = [
+    { title: "Festive Edit", subtitle: "Sequins, shimmer and statement fits", link: "/category/Women" },
+    { title: "Everyday Denim", subtitle: "Comfy styles for daily wear", link: "/category/Men" },
+    { title: "Mini Fashion", subtitle: "Playful looks for little stars", link: "/category/Kids" },
+  ];
+  const categoryCards = [
+    { name: "Women", image: "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji/color/618x618/1F469.png" },
+    { name: "Men", image: "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji/color/618x618/1F468.png" },
+    { name: "Kids", image: "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji/color/618x618/1F9D2.png" },
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="space-y-12 pb-10">
+      {dbError && (
+        <section className="rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          Database is unreachable right now. Showing a limited storefront preview.
+        </section>
+      )}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-black via-zinc-900 to-pink-700 px-6 py-14 text-white md:px-12">
+        <p className="text-sm uppercase tracking-[0.25em] text-pink-200">Sonia Dresses Collection</p>
+        <h1 className="mt-4 max-w-2xl text-4xl font-black leading-tight md:text-6xl">
+          Fashion-first styles inspired by global trends.
+        </h1>
+        <p className="mt-4 max-w-xl text-sm text-zinc-100 md:text-base">
+          Discover bold new drops, festive must-haves, and timeless picks designed to make everyday dressing easy.
+        </p>
+        <div className="mt-7 flex flex-wrap gap-3">
+          <Link href="/category/Women" className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black">
+            Shop Women
+          </Link>
+          <Link href="/category/Kids" className="rounded-full border border-white/40 px-5 py-2 text-sm font-semibold">
+            Shop Kids
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-2xl font-bold">Shop by Category</h2>
+          <Link href="/category/Women" className="text-sm font-semibold text-pink-600">
+            View all
+          </Link>
         </div>
-      </main>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {categoryCards.map((category) => (
+            <Link
+              key={category.name}
+              href={`/category/${category.name}`}
+              className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <div className="relative h-44 w-full overflow-hidden">
+                <Image src={category.image} alt={category.name} fill className="object-cover transition duration-500 group-hover:scale-105" unoptimized />
+              </div>
+              <div className="p-4 text-center text-base font-semibold">{category.name}</div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-4 text-2xl font-bold">Trending Now</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          {trendCards.map((card) => (
+            <Link
+              key={card.title}
+              href={card.link}
+              className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+            >
+              <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">Edit</p>
+              <h3 className="mt-2 text-xl font-bold">{card.title}</h3>
+              <p className="mt-2 text-sm text-zinc-600">{card.subtitle}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-4 text-2xl font-bold">Featured Products</h2>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {featuredProducts.map((product) => (
+            <ProductCard key={String(product._id)} product={{ ...product, _id: String(product._id) }} />
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-4 text-2xl font-bold">New In</h2>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {newArrivals.map((product) => (
+            <ProductCard key={String(product._id)} product={{ ...product, _id: String(product._id) }} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

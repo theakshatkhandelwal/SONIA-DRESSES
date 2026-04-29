@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sonia Dresses - Free MVP E-commerce
 
-## Getting Started
+Completely free MVP clothing store built with:
 
-First, run the development server:
+- Next.js (frontend + backend API routes)
+- Tailwind CSS
+- MongoDB Atlas Free Tier
+- Cloudinary Free Tier
+- NextAuth.js (credentials auth for admin)
+- Vercel Free deployment
+- Payments: COD + WhatsApp order flow
+
+## 1) Project Setup
+
+```bash
+npm install
+cp .env.example .env.local
+```
+
+Fill `.env.local` with your free-tier credentials.
+
+Run the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 2) Database Setup (MongoDB Atlas Free)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Create a free MongoDB Atlas cluster.
+- Add database user and network access (IP allowlist).
+- Copy connection string into `MONGODB_URI`.
+- Database name used by app: `sonia_dresses`.
 
-## Learn More
+## 3) Cloudinary Setup (Free Tier)
 
-To learn more about Next.js, take a look at the following resources:
+- Create a free Cloudinary account.
+- Copy:
+  - `CLOUDINARY_CLOUD_NAME`
+  - `CLOUDINARY_API_KEY`
+  - `CLOUDINARY_API_SECRET`
+- Image uploads happen via `/api/upload` (admin only).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 4) Admin Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env.local`.
+- Login URL: `http://localhost:3000/admin/login`
+- Admin dashboard URL: `http://localhost:3000/admin`
 
-## Deploy on Vercel
+Admin can:
+- Add products
+- Delete products
+- Upload images to Cloudinary
+- View orders
+- Update order status
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 5) Customer Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Home with banner, categories, featured products
+- Category browsing + search
+- Product details with sizes
+- Cart (localStorage)
+- Checkout form (name, phone, address)
+- COD order placement
+- WhatsApp pre-filled order link
+
+## 6) API Routes
+
+- `GET/POST /api/products`
+- `GET/PUT/DELETE /api/products/:id`
+- `GET/POST /api/orders`
+- `PATCH /api/orders/:id`
+- `POST /api/upload`
+- `GET/POST /api/auth/[...nextauth]`
+
+## 7) Folder Structure
+
+```text
+src/
+  app/
+    admin/
+    api/
+    cart/
+    category/[category]/
+    checkout/
+    product/[id]/
+  components/
+    Header.js
+    ProductCard.js
+  context/
+    CartContext.js
+  lib/
+    auth.js
+    cloudinary.js
+    constants.js
+    db.js
+    models/
+      Order.js
+      Product.js
+```
+
+## 8) Deploy for Free (Vercel)
+
+- Push to GitHub.
+- Import project in Vercel (free plan).
+- Add same env vars in Vercel project settings.
+- Deploy.
+
+## Notes
+
+- No paid APIs/services are used.
+- No paid payment gateway is used.
+- Free-first MVP focused on real-world usability and easy upgrades later.
