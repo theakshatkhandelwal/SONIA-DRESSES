@@ -1,10 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import { normalizeCategory } from "@/lib/constants";
 import { MEGA_MENU, slugifyCollection } from "@/lib/megaMenu";
+
+const STRIP_ACTIVE =
+  "rounded-2xl border border-zinc-300/70 bg-zinc-200/95 px-2 py-2 shadow-sm ring-1 ring-white/40";
+const STRIP_IDLE =
+  "rounded-2xl border border-transparent px-2 py-2 hover:bg-zinc-100/70";
 
 const STRIP_ITEMS = {
   Women: [
@@ -36,9 +43,25 @@ const STRIP_ITEMS = {
 };
 
 export default function Header() {
+  const pathname = usePathname();
   const { items } = useCart();
   const [activeMenu, setActiveMenu] = useState("");
   const [activeStrip, setActiveStrip] = useState("Women");
+
+  const shopParts = useMemo(() => {
+    const m = pathname.match(/^\/shop\/([^/]+)\/([^/?#]+)/);
+    if (!m) return { cat: null, slug: null };
+    const cat = normalizeCategory(decodeURIComponent(m[1]));
+    const slug = decodeURIComponent(m[2]).toLowerCase();
+    if (!cat || !["Women", "Men", "Kids"].includes(cat)) return { cat: null, slug: null };
+    return { cat, slug };
+  }, [pathname]);
+
+  /** Strip row follows URL when on /shop/[gender]/[collection], else saved tab choice. */
+  const stripKey = shopParts.cat ?? activeStrip;
+  const onShopCollection = Boolean(shopParts.cat && shopParts.slug);
+  /** Grey “My Feed” only when not viewing a shop collection page. */
+  const feedActive = !onShopCollection;
 
   useEffect(() => {
     const preferred = window.localStorage.getItem("sonia_gender_choice");
@@ -46,6 +69,10 @@ export default function Header() {
       setActiveStrip(preferred);
     }
   }, []);
+
+  useEffect(() => {
+    if (shopParts.cat) setActiveStrip(shopParts.cat);
+  }, [shopParts.cat]);
 
   return (
     <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur" onMouseLeave={() => setActiveMenu("")}>
@@ -121,29 +148,41 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-3 overflow-x-auto pb-1 pt-0.5 sm:gap-4">
-            <div className="flex w-[4.75rem] shrink-0 flex-col items-center justify-center gap-2 rounded-2xl border border-zinc-300/70 bg-zinc-200/95 px-2 py-2 shadow-sm ring-1 ring-white/40">
+            <Link
+              href="/"
+              className={`flex w-[4.75rem] shrink-0 flex-col items-center justify-center gap-2 transition-colors ${feedActive ? STRIP_ACTIVE : STRIP_IDLE}`}
+              aria-current={feedActive ? "page" : undefined}
+            >
               <div className="flex h-[3.25rem] w-[3.25rem] shrink-0 items-center justify-center rounded-full bg-white text-[1.05rem] font-black leading-none tracking-tight text-zinc-900 shadow-inner ring-1 ring-zinc-200">
                 MY
               </div>
               <span className="block w-full text-center text-[10px] font-semibold uppercase leading-snug tracking-wide text-zinc-800 sm:text-[11px]">
                 My Feed
               </span>
-            </div>
+            </Link>
 
-            {STRIP_ITEMS[activeStrip].map((item) => (
-              <Link
-                key={`${activeStrip}-${item.label}`}
-                href={`/shop/${activeStrip}/${slugifyCollection(item.label)}`}
-                className="group flex w-[4.75rem] shrink-0 flex-col items-center justify-center gap-2"
-              >
-                <div className="relative h-[3.25rem] w-[3.25rem] shrink-0 overflow-hidden rounded-full border-2 border-zinc-300 bg-white transition group-hover:border-lime-500">
-                  <Image src={item.image} alt={item.label} fill className="object-cover" sizes="52px" unoptimized />
-                </div>
-                <span className="block w-full text-center text-[10px] font-semibold uppercase leading-snug tracking-wide text-zinc-800 sm:text-[11px]">
-                  {item.label}
-                </span>
-              </Link>
-            ))}
+            {STRIP_ITEMS[stripKey].map((item) => {
+              const itemSlug = slugifyCollection(item.label);
+              const itemActive =
+                onShopCollection && shopParts.cat === stripKey && shopParts.slug === itemSlug;
+              return (
+                <Link
+                  key={`${stripKey}-${item.label}`}
+                  href={`/shop/${stripKey}/${itemSlug}`}
+                  className={`group flex w-[4.75rem] shrink-0 flex-col items-center justify-center gap-2 transition-colors ${itemActive ? STRIP_ACTIVE : STRIP_IDLE}`}
+                  aria-current={itemActive ? "page" : undefined}
+                >
+                  <div
+                    className={`relative h-[3.25rem] w-[3.25rem] shrink-0 overflow-hidden rounded-full border-2 bg-white transition group-hover:border-lime-500 ${itemActive ? "border-pink-500 ring-2 ring-pink-100" : "border-zinc-300"}`}
+                  >
+                    <Image src={item.image} alt={item.label} fill className="object-cover" sizes="52px" unoptimized />
+                  </div>
+                  <span className="block w-full text-center text-[10px] font-semibold uppercase leading-snug tracking-wide text-zinc-800 sm:text-[11px]">
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
