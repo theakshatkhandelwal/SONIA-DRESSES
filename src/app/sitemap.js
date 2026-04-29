@@ -11,6 +11,12 @@ export default function sitemap() {
     "/category/Kids",
     "/cart",
     "/checkout",
+    "/size-guide",
+    "/contact",
+    "/policies/returns",
+    "/policies/privacy",
+    "/policies/terms",
+    "/policies/delivery",
   ];
 
   return staticPaths.map((path) => ({

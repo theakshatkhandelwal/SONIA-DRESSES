@@ -4,8 +4,9 @@ import { Product } from "@/lib/models/Product";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-export async function GET(_, { params }) {
+export async function GET(_, context) {
   try {
+    const params = await context.params;
     await connectToDB();
     const product = await Product.findById(params.id);
     if (!product) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -15,24 +16,26 @@ export async function GET(_, { params }) {
   }
 }
 
-export async function PUT(request, { params }) {
+export async function PUT(request, context) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const params = await context.params;
   await connectToDB();
   const payload = await request.json();
   const updated = await Product.findByIdAndUpdate(params.id, payload, { new: true });
   return NextResponse.json(updated);
 }
 
-export async function DELETE(_, { params }) {
+export async function DELETE(_, context) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const params = await context.params;
   await connectToDB();
   await Product.findByIdAndDelete(params.id);
   return NextResponse.json({ ok: true });

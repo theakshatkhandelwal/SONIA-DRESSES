@@ -66,11 +66,13 @@ export default function CheckoutPage() {
         return;
       }
 
+      const order = await response.json();
       toast.success("Order placed!", {
         description: "We’ll reach out to confirm delivery details.",
       });
       clearCart();
-      router.push("/");
+      const oid = order?._id ?? order?.id;
+      router.push(oid ? `/order-confirmation?orderId=${oid}` : "/order-confirmation");
     } catch {
       toast.error("Something went wrong. Check your connection and try again.");
     } finally {

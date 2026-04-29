@@ -36,7 +36,14 @@ export async function POST(request) {
 
   await connectToDB();
   const body = await request.json();
-  const payload = { ...body, slug: slugify(body.name) };
+  let baseSlug = slugify(body.name || "product");
+  let slug = baseSlug;
+  let n = 0;
+  while (await Product.exists({ slug })) {
+    n += 1;
+    slug = `${baseSlug}-${n}`;
+  }
+  const payload = { ...body, slug };
   const created = await Product.create(payload);
   return NextResponse.json(created, { status: 201 });
 }

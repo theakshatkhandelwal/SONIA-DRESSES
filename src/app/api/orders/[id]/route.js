@@ -4,12 +4,13 @@ import { Order } from "@/lib/models/Order";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-export async function PATCH(request, { params }) {
+export async function PATCH(request, context) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const params = await context.params;
   await connectToDB();
   const { status } = await request.json();
   const order = await Order.findByIdAndUpdate(params.id, { status }, { new: true });

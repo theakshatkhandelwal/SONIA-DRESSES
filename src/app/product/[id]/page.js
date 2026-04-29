@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import ProductGallery from "@/components/ProductGallery";
 import { useCart } from "@/context/CartContext";
 
 function ProductDetailSkeleton() {
@@ -89,17 +89,7 @@ export default function ProductDetailPage() {
 
   return (
     <div className="grid gap-10 pb-24 md:grid-cols-2 md:gap-12 md:pb-10">
-      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-zinc-100 shadow-md">
-        <Image
-          src={product.images?.[0] || "https://placehold.co/600x800?text=No+Image"}
-          alt={product.name}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover"
-          priority
-          unoptimized
-        />
-      </div>
+      <ProductGallery name={product.name} images={product.images} />
       <div className="flex flex-col space-y-5">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">{product.category}</p>
         <h1 className="text-3xl font-black leading-tight text-zinc-900 md:text-4xl">{product.name}</h1>
@@ -123,7 +113,22 @@ export default function ProductDetailPage() {
           </li>
           <li className="mt-2 flex gap-2">
             <span className="text-pink-600">✓</span>
-            <span>Easy returns &amp; exchanges — see footer for details</span>
+            <span>
+              Easy returns &amp; exchanges — see{" "}
+              <Link href="/policies/returns" className="font-semibold text-pink-700 underline-offset-2 hover:underline">
+                returns policy
+              </Link>
+            </span>
+          </li>
+          <li className="mt-2 flex gap-2">
+            <span className="text-pink-600">✓</span>
+            <span>
+              Not sure about size? See our{" "}
+              <Link href="/size-guide" className="font-semibold text-pink-700 underline-offset-2 hover:underline">
+                size guide
+              </Link>
+              .
+            </span>
           </li>
           {waDigits && (
             <li className="mt-2 flex gap-2">
