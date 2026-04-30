@@ -1,5 +1,5 @@
 /**
- * Seeds 10 demo products into MongoDB (db: sonia_dresses).
+ * Seeds demo products: 8 per category (Men, Women, Kids, Babies, Elderly) = 40 items.
  * Run: npm run seed:demo
  * Requires MONGODB_URI (loads .env.local via npm script when present).
  */
@@ -32,10 +32,10 @@ const ProductSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Product =
-  mongoose.models.Product || mongoose.model("Product", ProductSchema);
+const Product = mongoose.models.Product || mongoose.model("Product", ProductSchema);
 
-const DEMO_SLUGS = [
+/** Previous one-shot demo slugs (removed on re-seed so DB stays clean). */
+const LEGACY_DEMO_SLUGS = [
   "demo-floral-cotton-saree",
   "demo-embroidered-kurta-set",
   "demo-slim-stretch-jeans",
@@ -48,27 +48,28 @@ const DEMO_SLUGS = [
   "demo-kids-ethnic-kurta-set",
 ];
 
+const img = (bg, text) =>
+  `https://placehold.co/600x800/${bg}/ffffff?text=${encodeURIComponent(text)}`;
+
 const demoProducts = [
+  // —— Women (8) ——
   {
     name: "Floral Cotton Saree — Sapphire Garden",
-    slug: DEMO_SLUGS[0],
+    slug: "demo-women-saree-sapphire",
     category: "Women",
     subcategory: "Party wear",
     description:
-      "Lightweight cotton saree with garden florals. Gentle drape for festive gatherings and daytime celebrations. Includes unstitched blouse fabric.",
+      "Lightweight cotton saree with garden florals. Gentle drape for festive gatherings. Includes unstitched blouse fabric.",
     price: 2499,
     compareAtPrice: 3299,
     stock: 28,
     sizes: ["S", "M", "L", "XL"],
-    images: [
-      "https://placehold.co/600x800/f472b6/ffffff?text=Saree+A",
-      "https://placehold.co/600x800/ec4899/ffffff?text=Saree+B",
-    ],
+    images: [img("f472b6", "Saree A"), img("ec4899", "Saree B")],
     featured: true,
   },
   {
     name: "Embroidered Kurta Set — Ivory Mist",
-    slug: DEMO_SLUGS[1],
+    slug: "demo-women-kurta-ivory",
     category: "Women",
     subcategory: "Occasion-specific",
     description:
@@ -77,65 +78,12 @@ const demoProducts = [
     compareAtPrice: 4599,
     stock: 18,
     sizes: ["XS", "S", "M", "L", "XL"],
-    images: [
-      "https://placehold.co/600x800/a855f7/ffffff?text=Kurta+Set",
-      "https://placehold.co/600x800/9333ea/ffffff?text=Detail",
-    ],
+    images: [img("a855f7", "Kurta Set"), img("9333ea", "Detail")],
     featured: true,
   },
   {
-    name: "Slim Stretch Jeans — Midnight Blue",
-    slug: DEMO_SLUGS[2],
-    category: "Men",
-    subcategory: "Bottom wear",
-    description:
-      "Mid-rise slim fit with stretch for everyday comfort. Dark rinse works from office casual to weekend outings.",
-    price: 1899,
-    compareAtPrice: 2399,
-    stock: 42,
-    sizes: ["28", "30", "32", "34", "36"],
-    images: [
-      "https://placehold.co/600x800/1e3a8a/ffffff?text=Jeans",
-      "https://placehold.co/600x800/1e40af/ffffff?text=Fit",
-    ],
-    featured: false,
-  },
-  {
-    name: "Classic Polo T-Shirt — Twin Pack",
-    slug: DEMO_SLUGS[3],
-    category: "Men",
-    subcategory: "Casual wear",
-    description:
-      "Soft pique cotton polos in navy and white. Breathable collar and reinforced placket for daily wear.",
-    price: 1299,
-    stock: 55,
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    images: [
-      "https://placehold.co/600x800/0f766e/ffffff?text=Polo",
-      "https://placehold.co/600x800/115e59/ffffff?text=Pack",
-    ],
-    featured: false,
-  },
-  {
-    name: "Kids Printed Frock — Candy Flutter",
-    slug: DEMO_SLUGS[4],
-    category: "Kids",
-    subcategory: "Party wear",
-    description:
-      "Twirl-ready frock with soft lining and playful print. Easy zip back for quick changes.",
-    price: 899,
-    compareAtPrice: 1199,
-    stock: 36,
-    sizes: ["2-3Y", "4-5Y", "6-7Y", "8-9Y"],
-    images: [
-      "https://placehold.co/600x800/f9a8d4/1f2937?text=Frock",
-      "https://placehold.co/600x800/f472b6/ffffff?text=Back",
-    ],
-    featured: false,
-  },
-  {
     name: "Sequin Evening Dress — Rose Quartz",
-    slug: DEMO_SLUGS[5],
+    slug: "demo-women-evening-rose",
     category: "Women",
     subcategory: "Party wear",
     description:
@@ -144,47 +92,12 @@ const demoProducts = [
     compareAtPrice: 6999,
     stock: 12,
     sizes: ["XS", "S", "M", "L"],
-    images: [
-      "https://placehold.co/600x800/be185d/ffffff?text=Evening",
-      "https://placehold.co/600x800/9d174d/ffffff?text=Detail",
-    ],
+    images: [img("be185d", "Evening"), img("9d174d", "Detail")],
     featured: true,
   },
   {
-    name: "Formal Oxford Shirt — Steel Blue",
-    slug: DEMO_SLUGS[6],
-    category: "Men",
-    subcategory: "Upper wear",
-    description:
-      "Crisp cotton-blend oxford with structured collar. Ideal with tailored trousers or dark denim.",
-    price: 1599,
-    stock: 48,
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    images: [
-      "https://placehold.co/600x800/64748b/ffffff?text=Shirt",
-      "https://placehold.co/600x800/475569/ffffff?text=Cuff",
-    ],
-    featured: false,
-  },
-  {
-    name: "Kids Twin Tracksuit — Neon Sprint",
-    slug: DEMO_SLUGS[7],
-    category: "Kids",
-    subcategory: "Casual wear",
-    description:
-      "Matching hoodie and jogger set in breathable fleece-back jersey. Stretch cuffs for active kids.",
-    price: 1499,
-    stock: 40,
-    sizes: ["4-5Y", "6-7Y", "8-9Y", "10-11Y"],
-    images: [
-      "https://placehold.co/600x800/fbbf24/1f2937?text=Tracksuit",
-      "https://placehold.co/600x800/f59e0b/1f2937?text=Set",
-    ],
-    featured: false,
-  },
-  {
     name: "Denim Jacket — Cropped Ice Blue",
-    slug: DEMO_SLUGS[8],
+    slug: "demo-women-denim-jacket",
     category: "Women",
     subcategory: "Casual wear",
     description:
@@ -193,15 +106,193 @@ const demoProducts = [
     compareAtPrice: 3499,
     stock: 22,
     sizes: ["XS", "S", "M", "L", "XL"],
-    images: [
-      "https://placehold.co/600x800/7dd3fc/1e293b?text=Jacket",
-      "https://placehold.co/600x800/38bdf8/1e293b?text=Fit",
-    ],
+    images: [img("7dd3fc", "Jacket"), img("38bdf8", "Fit")],
+    featured: false,
+  },
+  {
+    name: "Linen Blend Palazzo Set — Sage",
+    slug: "demo-women-palazzo-sage",
+    category: "Women",
+    subcategory: "Casual wear",
+    description: "Relaxed kurta with wide palazzos in breathable linen blend. Ideal for workdays and brunches.",
+    price: 2199,
+    stock: 30,
+    sizes: ["S", "M", "L", "XL"],
+    images: [img("86efac", "Palazzo"), img("4ade80", "Set")],
+    featured: false,
+  },
+  {
+    name: "Printed Maxi Dress — Sunset Stripe",
+    slug: "demo-women-maxi-sunset",
+    category: "Women",
+    subcategory: "Party wear",
+    description: "Flowing maxi with adjustable straps and side pockets. Stripe print for holidays and getaways.",
+    price: 1999,
+    compareAtPrice: 2599,
+    stock: 25,
+    sizes: ["XS", "S", "M", "L"],
+    images: [img("fb923c", "Maxi"), img("f97316", "Stripe")],
+    featured: false,
+  },
+  {
+    name: "Cotton Camisole Pack — Essentials",
+    slug: "demo-women-camisole-pack",
+    category: "Women",
+    subcategory: "Innerwear",
+    description: "Soft cotton camisoles in neutral tones. Adjustable straps; pack of three.",
+    price: 799,
+    stock: 60,
+    sizes: ["S", "M", "L", "XL"],
+    images: [img("fda4af", "Camisole"), img("fbcfe8", "Pack")],
+    featured: false,
+  },
+  {
+    name: "Wool Blend Shawl — Winter Plum",
+    slug: "demo-women-shawl-plum",
+    category: "Women",
+    subcategory: "Occasion-specific",
+    description: "Lightweight wool-blend shawl with subtle weave. Drapes beautifully over ethnic or western wear.",
+    price: 1499,
+    stock: 20,
+    sizes: ["One size"],
+    images: [img("c084fc", "Shawl"), img("7c3aed", "Drape")],
+    featured: false,
+  },
+
+  // —— Men (8) ——
+  {
+    name: "Slim Stretch Jeans — Midnight Blue",
+    slug: "demo-men-jeans-midnight",
+    category: "Men",
+    subcategory: "Bottom wear",
+    description:
+      "Mid-rise slim fit with stretch for everyday comfort. Dark rinse works from office casual to weekend outings.",
+    price: 1899,
+    compareAtPrice: 2399,
+    stock: 42,
+    sizes: ["28", "30", "32", "34", "36"],
+    images: [img("1e3a8a", "Jeans"), img("1e40af", "Fit")],
+    featured: true,
+  },
+  {
+    name: "Classic Polo T-Shirt — Twin Pack",
+    slug: "demo-men-polo-twin",
+    category: "Men",
+    subcategory: "Casual wear",
+    description:
+      "Soft pique cotton polos in navy and white. Breathable collar and reinforced placket for daily wear.",
+    price: 1299,
+    stock: 55,
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    images: [img("0f766e", "Polo"), img("115e59", "Pack")],
+    featured: false,
+  },
+  {
+    name: "Formal Oxford Shirt — Steel Blue",
+    slug: "demo-men-oxford-steel",
+    category: "Men",
+    subcategory: "Upper wear",
+    description:
+      "Crisp cotton-blend oxford with structured collar. Ideal with tailored trousers or dark denim.",
+    price: 1599,
+    stock: 48,
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    images: [img("64748b", "Shirt"), img("475569", "Cuff")],
+    featured: false,
+  },
+  {
+    name: "Tapered Chinos — Khaki Sand",
+    slug: "demo-men-chinos-khaki",
+    category: "Men",
+    subcategory: "Bottom wear",
+    description: "Stretch cotton chinos with tapered leg. Office-ready with sneakers or loafers.",
+    price: 1699,
+    compareAtPrice: 1999,
+    stock: 38,
+    sizes: ["30", "32", "34", "36", "38"],
+    images: [img("d6d3d1", "Chinos"), img("a8a29e", "Fit")],
+    featured: false,
+  },
+  {
+    name: "Athletic Zip Hoodie — Graphite",
+    slug: "demo-men-hoodie-graphite",
+    category: "Men",
+    subcategory: "Casual wear",
+    description: "Mid-weight fleece hoodie with zip pockets. Great for travel and gym layers.",
+    price: 2199,
+    stock: 33,
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    images: [img("374151", "Hoodie"), img("1f2937", "Zip")],
+    featured: false,
+  },
+  {
+    name: "Cotton Boxers — 3 Pack",
+    slug: "demo-men-boxers-pack",
+    category: "Men",
+    subcategory: "Innerwear",
+    description: "Breathable cotton boxers with soft waistband. Assorted colours in one pack.",
+    price: 699,
+    stock: 70,
+    sizes: ["S", "M", "L", "XL"],
+    images: [img("94a3b8", "Boxers"), img("64748b", "Pack")],
+    featured: false,
+  },
+  {
+    name: "Indo-Western Bandhgala — Black",
+    slug: "demo-men-bandhgala-black",
+    category: "Men",
+    subcategory: "Occasion-specific",
+    description: "Tailored bandhgala jacket in matte finish. Pair with trousers for receptions and dinners.",
+    price: 4599,
+    compareAtPrice: 5499,
+    stock: 15,
+    sizes: ["S", "M", "L", "XL"],
+    images: [img("171717", "Bandhgala"), img("262626", "Detail")],
+    featured: true,
+  },
+  {
+    name: "Running Shorts — Volt",
+    slug: "demo-men-shorts-volt",
+    category: "Men",
+    subcategory: "Casual wear",
+    description: "Lightweight shorts with inner brief and zip pocket. Built for training and weekend runs.",
+    price: 999,
+    stock: 45,
+    sizes: ["S", "M", "L", "XL"],
+    images: [img("84cc16", "Shorts"), img("65a30d", "Sport")],
+    featured: false,
+  },
+
+  // —— Kids (8) ——
+  {
+    name: "Kids Printed Frock — Candy Flutter",
+    slug: "demo-kids-frock-candy",
+    category: "Kids",
+    subcategory: "Party wear",
+    description: "Twirl-ready frock with soft lining and playful print. Easy zip back for quick changes.",
+    price: 899,
+    compareAtPrice: 1199,
+    stock: 36,
+    sizes: ["2-3Y", "4-5Y", "6-7Y", "8-9Y"],
+    images: [img("f9a8d4", "Frock"), img("f472b6", "Back")],
+    featured: false,
+  },
+  {
+    name: "Kids Twin Tracksuit — Neon Sprint",
+    slug: "demo-kids-tracksuit-neon",
+    category: "Kids",
+    subcategory: "Casual wear",
+    description:
+      "Matching hoodie and jogger set in breathable fleece-back jersey. Stretch cuffs for active kids.",
+    price: 1499,
+    stock: 40,
+    sizes: ["4-5Y", "6-7Y", "8-9Y", "10-11Y"],
+    images: [img("fbbf24", "Tracksuit"), img("f59e0b", "Set")],
     featured: false,
   },
   {
     name: "Kids Ethnic Kurta Pyjama — Festive Gold",
-    slug: DEMO_SLUGS[9],
+    slug: "demo-kids-kurta-festive",
     category: "Kids",
     subcategory: "Occasion-specific",
     description:
@@ -209,13 +300,272 @@ const demoProducts = [
     price: 1199,
     stock: 33,
     sizes: ["2-3Y", "4-5Y", "6-7Y", "8-9Y"],
-    images: [
-      "https://placehold.co/600x800/d97706/ffffff?text=Kurta",
-      "https://placehold.co/600x800/b45309/ffffff?text=Pyjama",
-    ],
+    images: [img("d97706", "Kurta"), img("b45309", "Pyjama")],
+    featured: true,
+  },
+  {
+    name: "School Shirt — White Pack",
+    slug: "demo-kids-school-shirt",
+    category: "Kids",
+    subcategory: "Upper wear",
+    description: "Crisp cotton school shirts with reinforced collar. Pack of two for weekday rotation.",
+    price: 799,
+    stock: 50,
+    sizes: ["4-5Y", "6-7Y", "8-9Y", "10-11Y"],
+    images: [img("e2e8f0", "Shirt"), img("cbd5e1", "Pack")],
+    featured: false,
+  },
+  {
+    name: "Denim Dungarees — Indigo",
+    slug: "demo-kids-dungarees-indigo",
+    category: "Kids",
+    subcategory: "Casual wear",
+    description: "Adjustable strap dungarees with snap closures. Layer over tees year-round.",
+    price: 1299,
+    stock: 28,
+    sizes: ["2-3Y", "4-5Y", "6-7Y"],
+    images: [img("4f46e5", "Dungarees"), img("4338ca", "Indigo")],
+    featured: false,
+  },
+  {
+    name: "Party Blazer Set — Mini Gala",
+    slug: "demo-kids-blazer-gala",
+    category: "Kids",
+    subcategory: "Party wear",
+    description: "Single-breasted blazer with dress shirt and bow tie. For birthdays and celebrations.",
+    price: 2499,
+    compareAtPrice: 2999,
+    stock: 18,
+    sizes: ["4-5Y", "6-7Y", "8-9Y", "10-11Y"],
+    images: [img("1e1b4b", "Blazer"), img("312e81", "Gala")],
+    featured: false,
+  },
+  {
+    name: "Cotton Vest Set — Inner Soft",
+    slug: "demo-kids-vest-inner",
+    category: "Kids",
+    subcategory: "Innerwear",
+    description: "Soft cotton vests and briefs for everyday comfort. Hypoallergenic dyes.",
+    price: 499,
+    stock: 65,
+    sizes: ["2-3Y", "4-5Y", "6-7Y", "8-9Y"],
+    images: [img("fce7f3", "Vest"), img("fbcfe8", "Soft")],
+    featured: false,
+  },
+  {
+    name: "Rain Jacket — Citrus",
+    slug: "demo-kids-rain-citrus",
+    category: "Kids",
+    subcategory: "Occasion-specific",
+    description: "Water-resistant shell with hood and reflective trim. Packs into its own pocket.",
+    price: 1399,
+    stock: 24,
+    sizes: ["4-5Y", "6-7Y", "8-9Y", "10-11Y"],
+    images: [img("fde047", "Rain"), img("eab308", "Hood")],
+    featured: false,
+  },
+
+  // —— Babies (8) ——
+  {
+    name: "Organic Cotton Onesie — Cloud",
+    slug: "demo-babies-onesie-cloud",
+    category: "Babies",
+    subcategory: "Innerwear",
+    description: "GOTS-inspired soft onesie with snap closure. Gentle on newborn skin.",
+    price: 599,
+    stock: 80,
+    sizes: ["0-3M", "3-6M", "6-9M", "9-12M"],
+    images: [img("e0f2fe", "Onesie"), img("bae6fd", "Cloud")],
+    featured: true,
+  },
+  {
+    name: "Knit Romper Set — Buttercup",
+    slug: "demo-babies-romper-butter",
+    category: "Babies",
+    subcategory: "Casual wear",
+    description: "Cable-knit romper with matching cap. Stretch opening for easy diaper changes.",
+    price: 899,
+    stock: 45,
+    sizes: ["0-3M", "3-6M", "6-9M"],
+    images: [img("fef08a", "Romper"), img("fde047", "Knit")],
+    featured: false,
+  },
+  {
+    name: "Festive Baby Lehenga — Petal Pink",
+    slug: "demo-babies-lehenga-petal",
+    category: "Babies",
+    subcategory: "Party wear",
+    description: "Lightweight lehenga-choli set with elastic waist. For first festivals and photos.",
+    price: 1299,
+    compareAtPrice: 1599,
+    stock: 22,
+    sizes: ["6-9M", "9-12M", "12-18M"],
+    images: [img("fbcfe8", "Lehenga"), img("f9a8d4", "Petal")],
+    featured: false,
+  },
+  {
+    name: "Zip Sleepsuit 2-Pack — Night Sky",
+    slug: "demo-babies-sleepsuit-night",
+    category: "Babies",
+    subcategory: "Innerwear",
+    description: "Two-way zip sleepsuits in breathable jersey. Footed design for cosy nights.",
+    price: 999,
+    stock: 55,
+    sizes: ["0-3M", "3-6M", "6-9M"],
+    images: [img("312e81", "Sleep"), img("1e3a8a", "Zip")],
+    featured: false,
+  },
+  {
+    name: "Sun Hat & Bib Set — Lemon",
+    slug: "demo-babies-hat-bib",
+    category: "Babies",
+    subcategory: "Casual wear",
+    description: "Wide-brim sun hat with adjustable chin strap and matching dribble bib.",
+    price: 449,
+    stock: 70,
+    sizes: ["0-6M", "6-12M"],
+    images: [img("fef9c3", "Hat"), img("fde68a", "Bib")],
+    featured: false,
+  },
+  {
+    name: "Velour Pram Suit — Berry",
+    slug: "demo-babies-pram-berry",
+    category: "Babies",
+    subcategory: "Occasion-specific",
+    description: "Cosy velour all-in-one with fold-over mittens. Ideal for winter outings.",
+    price: 1199,
+    stock: 30,
+    sizes: ["0-3M", "3-6M", "6-9M"],
+    images: [img("9d174d", "Pram"), img("be123c", "Berry")],
+    featured: false,
+  },
+  {
+    name: "Muslin Swaddle 4-Pack",
+    slug: "demo-babies-swaddle-pack",
+    category: "Babies",
+    subcategory: "Innerwear",
+    description: "Large muslin swaddles in pastel prints. Gets softer with every wash.",
+    price: 799,
+    stock: 90,
+    sizes: ["One size"],
+    images: [img("cffafe", "Swaddle"), img("a5f3fc", "Muslin")],
+    featured: false,
+  },
+  {
+    name: "Baby Denim Overalls — Tiny",
+    slug: "demo-babies-overalls-denim",
+    category: "Babies",
+    subcategory: "Casual wear",
+    description: "Soft-stretch denim dungarees with shoulder snaps. Roomy for cloth diapers.",
+    price: 949,
+    stock: 38,
+    sizes: ["6-9M", "9-12M", "12-18M"],
+    images: [img("93c5fd", "Overall"), img("3b82f6", "Denim")],
+    featured: false,
+  },
+
+  // —— Elderly (8) ——
+  {
+    name: "Easy-Fit Cotton Kurta — Pearl",
+    slug: "demo-elderly-kurta-pearl",
+    category: "Elderly",
+    subcategory: "Casual wear",
+    description: "Front-button kurta with relaxed silhouette. Breathable cotton for daily comfort.",
+    price: 1299,
+    stock: 35,
+    sizes: ["M", "L", "XL", "XXL"],
+    images: [img("e7e5e4", "Kurta"), img("d6d3d1", "Pearl")],
+    featured: true,
+  },
+  {
+    name: "Elastic Waist Trousers — Slate",
+    slug: "demo-elderly-trousers-slate",
+    category: "Elderly",
+    subcategory: "Bottom wear",
+    description: "Full elastic waist with drawstring. Deep pockets and wrinkle-resistant fabric.",
+    price: 1099,
+    stock: 40,
+    sizes: ["M", "L", "XL", "XXL"],
+    images: [img("57534e", "Trousers"), img("44403c", "Slate")],
+    featured: false,
+  },
+  {
+    name: "Wool Blend Cardigan — Heather",
+    slug: "demo-elderly-cardigan-heather",
+    category: "Elderly",
+    subcategory: "Upper wear",
+    description: "Button-front cardigan with patch pockets. Gentle stretch for easy layering.",
+    price: 1899,
+    compareAtPrice: 2299,
+    stock: 26,
+    sizes: ["M", "L", "XL", "XXL"],
+    images: [img("a8a29e", "Cardigan"), img("78716c", "Heather")],
+    featured: false,
+  },
+  {
+    name: "Festive Silk Blend Shawl — Ruby",
+    slug: "demo-elderly-shawl-ruby",
+    category: "Elderly",
+    subcategory: "Occasion-specific",
+    description: "Lightweight shawl with subtle sheen. Drapes elegantly over sarees or suits.",
+    price: 1699,
+    stock: 20,
+    sizes: ["One size"],
+    images: [img("e11d48", "Shawl"), img("be123c", "Ruby")],
+    featured: false,
+  },
+  {
+    name: "Anti-Slip House Slippers — Cocoa",
+    slug: "demo-elderly-slippers-cocoa",
+    category: "Elderly",
+    subcategory: "Innerwear",
+    description: "Memory foam insole with rubber grip sole. Wide fit for swollen feet.",
+    price: 799,
+    stock: 50,
+    sizes: ["6", "7", "8", "9", "10"],
+    images: [img("78350f", "Slipper"), img("451a03", "Grip")],
+    featured: false,
+  },
+  {
+    name: "Pleated Midi Skirt — Soft Grey",
+    slug: "demo-elderly-skirt-grey",
+    category: "Elderly",
+    subcategory: "Party wear",
+    description: "Comfort waist midi with knife pleats. Pairs with kurtas or blouses.",
+    price: 1399,
+    stock: 24,
+    sizes: ["M", "L", "XL"],
+    images: [img("d4d4d8", "Skirt"), img("a1a1aa", "Pleat")],
+    featured: false,
+  },
+  {
+    name: "Thermal Vest — Winter White",
+    slug: "demo-elderly-thermal-vest",
+    category: "Elderly",
+    subcategory: "Innerwear",
+    description: "Quilted thermal vest for core warmth. Zip front and high neck.",
+    price: 999,
+    stock: 42,
+    sizes: ["M", "L", "XL", "XXL"],
+    images: [img("f5f5f4", "Thermal"), img("e7e5e4", "Vest")],
+    featured: false,
+  },
+  {
+    name: "Walking Shoes — Support Sole",
+    slug: "demo-elderly-walking-shoes",
+    category: "Elderly",
+    subcategory: "Casual wear",
+    description: "Cushioned walking shoes with wide toe box and velcro closure. Everyday support.",
+    price: 2199,
+    compareAtPrice: 2699,
+    stock: 30,
+    sizes: ["6", "7", "8", "9", "10", "11"],
+    images: [img("27272a", "Shoes"), img("18181b", "Sole")],
     featured: false,
   },
 ];
+
+const SEED_SLUGS = demoProducts.map((p) => p.slug);
 
 async function main() {
   const uri = process.env.MONGODB_URI;
@@ -230,12 +580,17 @@ async function main() {
     serverSelectionTimeoutMS: 15000,
   });
 
-  const removed = await Product.deleteMany({ slug: { $in: DEMO_SLUGS } });
-  console.log(`Removed ${removed.deletedCount} previous demo product(s) with the same slugs.`);
+  const toRemove = [...new Set([...LEGACY_DEMO_SLUGS, ...SEED_SLUGS])];
+  const removed = await Product.deleteMany({ slug: { $in: toRemove } });
+  console.log(`Removed ${removed.deletedCount} existing demo product(s) (legacy + current slugs).`);
 
   const inserted = await Product.insertMany(demoProducts);
-  console.log(`Inserted ${inserted.length} demo products:`);
-  inserted.forEach((p) => console.log(`  - ${p.name} (${p.slug})`));
+  console.log(`Inserted ${inserted.length} demo products (8 per category × 5 categories):`);
+  for (const cat of CATEGORIES) {
+    const rows = inserted.filter((p) => p.category === cat);
+    console.log(`  ${cat}: ${rows.length}`);
+    rows.forEach((p) => console.log(`    - ${p.name}`));
+  }
 
   await mongoose.disconnect();
   console.log("Done.");
