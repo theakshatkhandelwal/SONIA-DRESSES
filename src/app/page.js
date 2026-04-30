@@ -25,9 +25,9 @@ export default async function Home() {
     { title: "Mini Fashion", subtitle: "Playful looks for little stars", link: "/category/Kids" },
   ];
   const categoryCards = [
-    { name: "Women", image: "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji/color/618x618/1F469.png" },
-    { name: "Men", image: "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji/color/618x618/1F468.png" },
-    { name: "Kids", image: "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji/color/618x618/1F9D2.png" },
+    { name: "Women", image: "/women.jpeg" },
+    { name: "Men", image: "/men.jpeg" },
+    { name: "Kids", image: "/kids.jpeg" },
   ];
 
   return (
@@ -48,14 +48,21 @@ export default async function Home() {
           </Link>
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {categoryCards.map((category) => (
+          {categoryCards.map((category, index) => (
             <Link
               key={category.name}
               href={`/category/${category.name}`}
               className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
             >
               <div className="relative h-44 w-full overflow-hidden">
-                <Image src={category.image} alt={category.name} fill className="object-cover transition duration-500 group-hover:scale-105" unoptimized />
+                <Image
+                  src={category.image}
+                  alt={category.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  priority={index === 0}
+                />
               </div>
               <div className="p-4 text-center text-base font-semibold">{category.name}</div>
             </Link>
