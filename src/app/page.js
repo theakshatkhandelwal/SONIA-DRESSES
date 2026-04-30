@@ -25,9 +25,9 @@ export default async function Home() {
     { title: "Mini Fashion", subtitle: "Playful looks for little stars", link: "/category/Kids" },
   ];
   const categoryCards = [
-    { name: "Women", image: "/women.jpeg" },
-    { name: "Men", image: "/men.jpeg" },
-    { name: "Kids", image: "/kids.jpeg" },
+    { name: "Women", image: "/women.jpg" },
+    { name: "Men", image: "/men.jpg" },
+    { name: "Kids", image: "/kids.jpg" },
   ];
 
   return (
