@@ -1,8 +1,6 @@
 import "./globals.css";
 import Providers from "./providers";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import TrustStrip from "@/components/TrustStrip";
+import StoreShell from "@/components/StoreShell";
 import { getSiteUrl } from "@/lib/siteUrl";
 
 const siteUrl = getSiteUrl();
@@ -50,10 +48,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className="h-full" suppressHydrationWarning>
       <body className="min-h-full bg-zinc-50 text-zinc-900" suppressHydrationWarning>
         <Providers>
-          <Header />
-          <TrustStrip />
-          <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-10 pt-4">{children}</main>
-          <Footer />
+          <StoreShell>{children}</StoreShell>
         </Providers>
       </body>
     </html>

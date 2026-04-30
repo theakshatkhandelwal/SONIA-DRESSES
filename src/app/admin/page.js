@@ -52,6 +52,9 @@ export default function AdminPage() {
   const [orders, setOrders] = useState([]);
   const [form, setForm] = useState(initial);
   const [imageFiles, setImageFiles] = useState([]);
+  const [editForm, setEditForm] = useState(null);
+  const [editNewFiles, setEditNewFiles] = useState([]);
+  const [editSaving, setEditSaving] = useState(false);
 
   async function loadData() {
     const [pRes, oRes] = await Promise.all([fetch("/api/products"), fetch("/api/orders")]);
@@ -146,6 +149,113 @@ export default function AdminPage() {
     }
   }
 
+  function openEdit(p) {
+    setEditForm({
+      _id: p._id,
+      name: p.name,
+      description: p.description || "",
+      price: p.price,
+      stock: p.stock,
+      compareAtPrice: p.compareAtPrice != null && p.compareAtPrice !== "" ? String(p.compareAtPrice) : "",
+      featured: Boolean(p.featured),
+      images: [...(p.images || [])],
+      category: p.category,
+      subcategory: p.subcategory,
+      sizes: [...(p.sizes || ["M"])],
+    });
+    setEditNewFiles([]);
+  }
+
+  function closeEdit() {
+    setEditForm(null);
+    setEditNewFiles([]);
+    setEditSaving(false);
+  }
+
+  function toggleEditSize(s) {
+    setEditForm((prev) => {
+      if (!prev) return prev;
+      const has = prev.sizes.includes(s);
+      const next = has ? prev.sizes.filter((x) => x !== s) : [...prev.sizes, s];
+      return { ...prev, sizes: sortSizesSelected(next) };
+    });
+  }
+
+  function removeEditImage(index) {
+    setEditForm((prev) => {
+      if (!prev) return prev;
+      const images = prev.images.filter((_, i) => i !== index);
+      return { ...prev, images };
+    });
+  }
+
+  async function saveEdit(e) {
+    e.preventDefault();
+    if (!editForm) return;
+    if (editForm.sizes.length === 0) {
+      toast.error("Select at least one size.");
+      return;
+    }
+    if (editForm.images.length === 0 && editNewFiles.length === 0) {
+      toast.error("Keep at least one image, or add new photos.");
+      return;
+    }
+
+    setEditSaving(true);
+    const newUrls = [];
+    try {
+      for (const file of editNewFiles) {
+        const url = await uploadFileToCloudinary(file);
+        if (url) newUrls.push(url);
+      }
+    } catch (err) {
+      setEditSaving(false);
+      toast.error(err?.message || "Image upload failed.");
+      return;
+    }
+
+    const images = [...editForm.images, ...newUrls];
+    if (images.length === 0) {
+      setEditSaving(false);
+      toast.error("At least one image is required.");
+      return;
+    }
+
+    const payload = {
+      name: editForm.name.trim(),
+      description: editForm.description.trim(),
+      price: Number(editForm.price),
+      stock: Number(editForm.stock),
+      featured: editForm.featured,
+      images,
+      category: editForm.category,
+      subcategory: editForm.subcategory,
+      sizes: editForm.sizes,
+    };
+    if (editForm.compareAtPrice === "" || editForm.compareAtPrice == null) {
+      payload.compareAtPrice = "";
+    } else {
+      const n = Number(editForm.compareAtPrice);
+      payload.compareAtPrice = Number.isNaN(n) ? "" : n;
+    }
+
+    const res = await fetch(`/api/products/${editForm._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    setEditSaving(false);
+
+    if (res.ok) {
+      toast.success("Product updated.");
+      closeEdit();
+      loadData();
+    } else {
+      const err = await res.json().catch(() => ({}));
+      toast.error(err.error || "Could not update product.");
+    }
+  }
+
   async function updateOrderStatus(id, orderStatus) {
     const res = await fetch(`/api/orders/${id}`, {
       method: "PATCH",
@@ -155,10 +265,17 @@ export default function AdminPage() {
     if (res.ok) loadData();
   }
 
-  if (status === "loading") return <p>Loading...</p>;
+  if (status === "loading") {
+    return (
+      <div className="mx-auto max-w-4xl px-4 py-16 text-center text-zinc-600">
+        <p>Loading…</p>
+      </div>
+    );
+  }
   if (!session) {
     return (
-      <div className="mx-auto max-w-md space-y-3 rounded-xl border bg-white p-6 text-center">
+      <div className="mx-auto max-w-4xl px-4 py-12">
+        <div className="mx-auto max-w-md space-y-3 rounded-xl border border-zinc-200 bg-white p-8 text-center shadow-sm">
         <p className="text-zinc-800">Sign in to manage products and orders.</p>
         <Link
           href="/admin/login"
@@ -170,12 +287,13 @@ export default function AdminPage() {
           Use the same email and password as <code className="rounded bg-zinc-100 px-1">ADMIN_EMAIL</code> and{" "}
           <code className="rounded bg-zinc-100 px-1">ADMIN_PASSWORD</code> in Vercel, then redeploy if you changed them.
         </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
         <button type="button" onClick={() => signOut()} className="rounded-lg bg-zinc-800 px-3 py-2 text-white">
@@ -288,6 +406,13 @@ export default function AdminPage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
+                  onClick={() => openEdit(p)}
+                  className="rounded-lg bg-zinc-900 px-3 py-1 text-xs font-semibold text-white hover:bg-zinc-800"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
                   onClick={() => toggleFeatured(p)}
                   className="rounded-lg border border-zinc-300 px-3 py-1 text-xs font-semibold hover:bg-zinc-50"
                 >
@@ -301,6 +426,165 @@ export default function AdminPage() {
           ))}
         </div>
       </section>
+
+      {editForm ? (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="edit-product-title"
+        >
+          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl">
+            <div className="flex items-start justify-between gap-2">
+              <h2 id="edit-product-title" className="text-lg font-semibold">
+                Edit product
+              </h2>
+              <button type="button" onClick={closeEdit} className="rounded-lg px-2 py-1 text-sm text-zinc-500 hover:bg-zinc-100">
+                Close
+              </button>
+            </div>
+            <form className="mt-4 grid gap-3" onSubmit={saveEdit}>
+              <input
+                value={editForm.name}
+                onChange={(e) => setEditForm((f) => (f ? { ...f, name: e.target.value } : f))}
+                placeholder="Product name"
+                required
+                className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+              />
+              <textarea
+                rows={3}
+                value={editForm.description}
+                onChange={(e) => setEditForm((f) => (f ? { ...f, description: e.target.value } : f))}
+                placeholder="Description"
+                required
+                className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+              />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-zinc-500">Price (Rs)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={editForm.price}
+                    onChange={(e) => setEditForm((f) => (f ? { ...f, price: Number(e.target.value) } : f))}
+                    className="mt-0.5 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-zinc-500">Stock</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={editForm.stock}
+                    onChange={(e) => setEditForm((f) => (f ? { ...f, stock: Number(e.target.value) } : f))}
+                    className="mt-0.5 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-zinc-500">Compare at (optional)</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={editForm.compareAtPrice}
+                  onChange={(e) => setEditForm((f) => (f ? { ...f, compareAtPrice: e.target.value } : f))}
+                  placeholder="Leave empty to clear"
+                  className="mt-0.5 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-zinc-500">Category</label>
+                  <select
+                    value={editForm.category}
+                    onChange={(e) => setEditForm((f) => (f ? { ...f, category: e.target.value } : f))}
+                    className="mt-0.5 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                  >
+                    {CATEGORIES.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-zinc-500">Subcategory</label>
+                  <select
+                    value={editForm.subcategory}
+                    onChange={(e) => setEditForm((f) => (f ? { ...f, subcategory: e.target.value } : f))}
+                    className="mt-0.5 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                  >
+                    {SUBCATEGORIES.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">Sizes</p>
+                <div className="flex flex-wrap gap-2">
+                  {SIZES.map((s) => (
+                    <label key={s} className="flex cursor-pointer items-center gap-2 text-sm">
+                      <input type="checkbox" checked={editForm.sizes.includes(s)} onChange={() => toggleEditSize(s)} />
+                      {s}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={editForm.featured}
+                  onChange={(e) => setEditForm((f) => (f ? { ...f, featured: e.target.checked } : f))}
+                />
+                Featured on homepage
+              </label>
+              <div>
+                <p className="mb-2 text-xs font-semibold text-zinc-500">Images</p>
+                <div className="flex flex-wrap gap-2">
+                  {editForm.images.map((url, i) => (
+                    <div key={`${url}-${i}`} className="relative h-16 w-16 overflow-hidden rounded-lg border bg-zinc-100">
+                      <img src={url} alt="" className="h-full w-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removeEditImage(i)}
+                        className="absolute right-0 top-0 rounded-bl bg-red-600 px-1 text-[10px] font-bold text-white"
+                        title="Remove"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="mt-2 text-sm"
+                  onChange={(e) => setEditNewFiles(Array.from(e.target.files || []))}
+                />
+                <p className="mt-1 text-xs text-zinc-500">
+                  {editNewFiles.length
+                    ? `${editNewFiles.length} new file(s) will upload on save.`
+                    : "Add more images (optional). Requires Cloudinary on the server."}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-2">
+                <button
+                  type="submit"
+                  disabled={editSaving}
+                  className="rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                >
+                  {editSaving ? "Saving…" : "Save changes"}
+                </button>
+                <button type="button" onClick={closeEdit} className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-semibold">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      ) : null}
 
       <section className="rounded-xl border bg-white p-4">
         <h2 className="mb-3 text-lg font-semibold">Orders</h2>
