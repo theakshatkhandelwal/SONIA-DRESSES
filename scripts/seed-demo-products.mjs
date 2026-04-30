@@ -1,5 +1,6 @@
 /**
  * Seeds demo products: 8 per category (Men, Women, Kids, Babies, Elderly) = 40 items.
+ * Product images use royalty-free stock URLs (Pexels + Unsplash), not AI-generated art.
  * Run: npm run seed:demo
  * Requires MONGODB_URI (loads .env.local via npm script when present).
  */
@@ -48,8 +49,15 @@ const LEGACY_DEMO_SLUGS = [
   "demo-kids-ethnic-kurta-set",
 ];
 
-const img = (bg, text) =>
-  `https://placehold.co/600x800/${bg}/ffffff?text=${encodeURIComponent(text)}`;
+/**
+ * Demo product photos — royalty-free stock (no AI-generated assets).
+ * Pexels: https://www.pexels.com/license/ · Unsplash: https://unsplash.com/license
+ */
+const Q = "?auto=compress&cs=tinysrgb&w=800&h=1000&fit=crop";
+const px = (id) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg${Q}`;
+const us = (slug) => `https://images.unsplash.com/photo-${slug}?w=800&h=1000&fit=crop&q=80`;
+/** Two gallery images per product */
+const pair = (a, b) => [a, b];
 
 const demoProducts = [
   // —— Women (8) ——
@@ -64,7 +72,7 @@ const demoProducts = [
     compareAtPrice: 3299,
     stock: 28,
     sizes: ["S", "M", "L", "XL"],
-    images: [img("f472b6", "Saree A"), img("ec4899", "Saree B")],
+    images: pair(px(1346187), px(1536619)),
     featured: true,
   },
   {
@@ -78,7 +86,7 @@ const demoProducts = [
     compareAtPrice: 4599,
     stock: 18,
     sizes: ["XS", "S", "M", "L", "XL"],
-    images: [img("a855f7", "Kurta Set"), img("9333ea", "Detail")],
+    images: pair(px(1926769), px(996329)),
     featured: true,
   },
   {
@@ -92,7 +100,7 @@ const demoProducts = [
     compareAtPrice: 6999,
     stock: 12,
     sizes: ["XS", "S", "M", "L"],
-    images: [img("be185d", "Evening"), img("9d174d", "Detail")],
+    images: pair(px(985584), us("1469334031218-e382a71b716b")),
     featured: true,
   },
   {
@@ -106,7 +114,7 @@ const demoProducts = [
     compareAtPrice: 3499,
     stock: 22,
     sizes: ["XS", "S", "M", "L", "XL"],
-    images: [img("7dd3fc", "Jacket"), img("38bdf8", "Fit")],
+    images: pair(px(1043474), px(1926769)),
     featured: false,
   },
   {
@@ -118,7 +126,7 @@ const demoProducts = [
     price: 2199,
     stock: 30,
     sizes: ["S", "M", "L", "XL"],
-    images: [img("86efac", "Palazzo"), img("4ade80", "Set")],
+    images: pair(px(3758806), px(2983464)),
     featured: false,
   },
   {
@@ -131,7 +139,7 @@ const demoProducts = [
     compareAtPrice: 2599,
     stock: 25,
     sizes: ["XS", "S", "M", "L"],
-    images: [img("fb923c", "Maxi"), img("f97316", "Stripe")],
+    images: pair(px(1449843), px(6567607)),
     featured: false,
   },
   {
@@ -143,7 +151,7 @@ const demoProducts = [
     price: 799,
     stock: 60,
     sizes: ["S", "M", "L", "XL"],
-    images: [img("fda4af", "Camisole"), img("fbcfe8", "Pack")],
+    images: pair(px(6311668), px(9776192)),
     featured: false,
   },
   {
@@ -155,7 +163,7 @@ const demoProducts = [
     price: 1499,
     stock: 20,
     sizes: ["One size"],
-    images: [img("c084fc", "Shawl"), img("7c3aed", "Drape")],
+    images: pair(px(1927259), us("1490481651871-ab68de25d43d")),
     featured: false,
   },
 
@@ -171,7 +179,7 @@ const demoProducts = [
     compareAtPrice: 2399,
     stock: 42,
     sizes: ["28", "30", "32", "34", "36"],
-    images: [img("1e3a8a", "Jeans"), img("1e40af", "Fit")],
+    images: pair(px(1040945), px(1183266)),
     featured: true,
   },
   {
@@ -184,7 +192,7 @@ const demoProducts = [
     price: 1299,
     stock: 55,
     sizes: ["S", "M", "L", "XL", "XXL"],
-    images: [img("0f766e", "Polo"), img("115e59", "Pack")],
+    images: pair(px(837140), px(2897529)),
     featured: false,
   },
   {
@@ -197,7 +205,7 @@ const demoProducts = [
     price: 1599,
     stock: 48,
     sizes: ["S", "M", "L", "XL", "XXL"],
-    images: [img("64748b", "Shirt"), img("475569", "Cuff")],
+    images: pair(px(6311392), px(6567607)),
     featured: false,
   },
   {
@@ -210,7 +218,7 @@ const demoProducts = [
     compareAtPrice: 1999,
     stock: 38,
     sizes: ["30", "32", "34", "36", "38"],
-    images: [img("d6d3d1", "Chinos"), img("a8a29e", "Fit")],
+    images: pair(px(10477341), px(6311426)),
     featured: false,
   },
   {
@@ -222,7 +230,7 @@ const demoProducts = [
     price: 2199,
     stock: 33,
     sizes: ["S", "M", "L", "XL", "XXL"],
-    images: [img("374151", "Hoodie"), img("1f2937", "Zip")],
+    images: pair(px(6311668), px(3760293)),
     featured: false,
   },
   {
@@ -234,7 +242,7 @@ const demoProducts = [
     price: 699,
     stock: 70,
     sizes: ["S", "M", "L", "XL"],
-    images: [img("94a3b8", "Boxers"), img("64748b", "Pack")],
+    images: pair(px(459957), px(698074)),
     featured: false,
   },
   {
@@ -247,7 +255,7 @@ const demoProducts = [
     compareAtPrice: 5499,
     stock: 15,
     sizes: ["S", "M", "L", "XL"],
-    images: [img("171717", "Bandhgala"), img("262626", "Detail")],
+    images: pair(px(2682289), px(3771087)),
     featured: true,
   },
   {
@@ -259,7 +267,7 @@ const demoProducts = [
     price: 999,
     stock: 45,
     sizes: ["S", "M", "L", "XL"],
-    images: [img("84cc16", "Shorts"), img("65a30d", "Sport")],
+    images: pair(px(3760273), px(1047542)),
     featured: false,
   },
 
@@ -274,7 +282,7 @@ const demoProducts = [
     compareAtPrice: 1199,
     stock: 36,
     sizes: ["2-3Y", "4-5Y", "6-7Y", "8-9Y"],
-    images: [img("f9a8d4", "Frock"), img("f472b6", "Back")],
+    images: pair(px(1648377), px(1043474)),
     featured: false,
   },
   {
@@ -287,7 +295,7 @@ const demoProducts = [
     price: 1499,
     stock: 40,
     sizes: ["4-5Y", "6-7Y", "8-9Y", "10-11Y"],
-    images: [img("fbbf24", "Tracksuit"), img("f59e0b", "Set")],
+    images: pair(px(6311668), px(6311392)),
     featured: false,
   },
   {
@@ -300,7 +308,7 @@ const demoProducts = [
     price: 1199,
     stock: 33,
     sizes: ["2-3Y", "4-5Y", "6-7Y", "8-9Y"],
-    images: [img("d97706", "Kurta"), img("b45309", "Pyjama")],
+    images: pair(px(1926769), us("1515886657613-9f3515b0c78e")),
     featured: true,
   },
   {
@@ -312,7 +320,7 @@ const demoProducts = [
     price: 799,
     stock: 50,
     sizes: ["4-5Y", "6-7Y", "8-9Y", "10-11Y"],
-    images: [img("e2e8f0", "Shirt"), img("cbd5e1", "Pack")],
+    images: pair(px(837140), px(6311426)),
     featured: false,
   },
   {
@@ -324,7 +332,7 @@ const demoProducts = [
     price: 1299,
     stock: 28,
     sizes: ["2-3Y", "4-5Y", "6-7Y"],
-    images: [img("4f46e5", "Dungarees"), img("4338ca", "Indigo")],
+    images: pair(px(1043474), px(6567607)),
     featured: false,
   },
   {
@@ -337,7 +345,7 @@ const demoProducts = [
     compareAtPrice: 2999,
     stock: 18,
     sizes: ["4-5Y", "6-7Y", "8-9Y", "10-11Y"],
-    images: [img("1e1b4b", "Blazer"), img("312e81", "Gala")],
+    images: pair(px(2682289), px(6311668)),
     featured: false,
   },
   {
@@ -349,7 +357,7 @@ const demoProducts = [
     price: 499,
     stock: 65,
     sizes: ["2-3Y", "4-5Y", "6-7Y", "8-9Y"],
-    images: [img("fce7f3", "Vest"), img("fbcfe8", "Soft")],
+    images: pair(px(459957), px(698074)),
     featured: false,
   },
   {
@@ -361,7 +369,7 @@ const demoProducts = [
     price: 1399,
     stock: 24,
     sizes: ["4-5Y", "6-7Y", "8-9Y", "10-11Y"],
-    images: [img("fde047", "Rain"), img("eab308", "Hood")],
+    images: pair(px(1047542), us("1552374196-c03e06273968")),
     featured: false,
   },
 
@@ -375,7 +383,7 @@ const demoProducts = [
     price: 599,
     stock: 80,
     sizes: ["0-3M", "3-6M", "6-9M", "9-12M"],
-    images: [img("e0f2fe", "Onesie"), img("bae6fd", "Cloud")],
+    images: pair(px(1648377), px(1043474)),
     featured: true,
   },
   {
@@ -387,7 +395,7 @@ const demoProducts = [
     price: 899,
     stock: 45,
     sizes: ["0-3M", "3-6M", "6-9M"],
-    images: [img("fef08a", "Romper"), img("fde047", "Knit")],
+    images: pair(px(6311392), px(6311668)),
     featured: false,
   },
   {
@@ -400,7 +408,7 @@ const demoProducts = [
     compareAtPrice: 1599,
     stock: 22,
     sizes: ["6-9M", "9-12M", "12-18M"],
-    images: [img("fbcfe8", "Lehenga"), img("f9a8d4", "Petal")],
+    images: pair(px(1346187), px(1926769)),
     featured: false,
   },
   {
@@ -412,7 +420,7 @@ const demoProducts = [
     price: 999,
     stock: 55,
     sizes: ["0-3M", "3-6M", "6-9M"],
-    images: [img("312e81", "Sleep"), img("1e3a8a", "Zip")],
+    images: pair(px(9776192), px(996329)),
     featured: false,
   },
   {
@@ -424,7 +432,7 @@ const demoProducts = [
     price: 449,
     stock: 70,
     sizes: ["0-6M", "6-12M"],
-    images: [img("fef9c3", "Hat"), img("fde68a", "Bib")],
+    images: pair(px(1043474), px(1648377)),
     featured: false,
   },
   {
@@ -436,7 +444,7 @@ const demoProducts = [
     price: 1199,
     stock: 30,
     sizes: ["0-3M", "3-6M", "6-9M"],
-    images: [img("9d174d", "Pram"), img("be123c", "Berry")],
+    images: pair(px(6567607), px(6311426)),
     featured: false,
   },
   {
@@ -448,7 +456,7 @@ const demoProducts = [
     price: 799,
     stock: 90,
     sizes: ["One size"],
-    images: [img("cffafe", "Swaddle"), img("a5f3fc", "Muslin")],
+    images: pair(px(459957), px(698074)),
     featured: false,
   },
   {
@@ -460,7 +468,7 @@ const demoProducts = [
     price: 949,
     stock: 38,
     sizes: ["6-9M", "9-12M", "12-18M"],
-    images: [img("93c5fd", "Overall"), img("3b82f6", "Denim")],
+    images: pair(px(1047542), px(2897529)),
     featured: false,
   },
 
@@ -474,7 +482,7 @@ const demoProducts = [
     price: 1299,
     stock: 35,
     sizes: ["M", "L", "XL", "XXL"],
-    images: [img("e7e5e4", "Kurta"), img("d6d3d1", "Pearl")],
+    images: pair(px(1926769), px(1346187)),
     featured: true,
   },
   {
@@ -486,7 +494,7 @@ const demoProducts = [
     price: 1099,
     stock: 40,
     sizes: ["M", "L", "XL", "XXL"],
-    images: [img("57534e", "Trousers"), img("44403c", "Slate")],
+    images: pair(px(1183266), px(1040945)),
     featured: false,
   },
   {
@@ -499,7 +507,7 @@ const demoProducts = [
     compareAtPrice: 2299,
     stock: 26,
     sizes: ["M", "L", "XL", "XXL"],
-    images: [img("a8a29e", "Cardigan"), img("78716c", "Heather")],
+    images: pair(px(6311392), us("1521572163474-6864f9cf17ab")),
     featured: false,
   },
   {
@@ -511,7 +519,7 @@ const demoProducts = [
     price: 1699,
     stock: 20,
     sizes: ["One size"],
-    images: [img("e11d48", "Shawl"), img("be123c", "Ruby")],
+    images: pair(px(1927259), px(1536619)),
     featured: false,
   },
   {
@@ -523,7 +531,7 @@ const demoProducts = [
     price: 799,
     stock: 50,
     sizes: ["6", "7", "8", "9", "10"],
-    images: [img("78350f", "Slipper"), img("451a03", "Grip")],
+    images: pair(px(6311668), px(6567607)),
     featured: false,
   },
   {
@@ -535,7 +543,7 @@ const demoProducts = [
     price: 1399,
     stock: 24,
     sizes: ["M", "L", "XL"],
-    images: [img("d4d4d8", "Skirt"), img("a1a1aa", "Pleat")],
+    images: pair(px(985584), px(996329)),
     featured: false,
   },
   {
@@ -547,7 +555,7 @@ const demoProducts = [
     price: 999,
     stock: 42,
     sizes: ["M", "L", "XL", "XXL"],
-    images: [img("f5f5f4", "Thermal"), img("e7e5e4", "Vest")],
+    images: pair(px(3760273), px(3771098)),
     featured: false,
   },
   {
@@ -560,7 +568,7 @@ const demoProducts = [
     compareAtPrice: 2699,
     stock: 30,
     sizes: ["6", "7", "8", "9", "10", "11"],
-    images: [img("27272a", "Shoes"), img("18181b", "Sole")],
+    images: pair(px(10477341), px(5705490)),
     featured: false,
   },
 ];
