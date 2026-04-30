@@ -2,6 +2,7 @@
 
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { CATEGORIES, SUBCATEGORIES, SIZES } from "@/lib/constants";
@@ -64,7 +65,16 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (status !== "authenticated") return;
-    loadData();
+    let cancelled = false;
+    void (async () => {
+      const [pRes, oRes] = await Promise.all([fetch("/api/products"), fetch("/api/orders")]);
+      if (cancelled) return;
+      if (pRes.ok) setProducts(await pRes.json());
+      if (oRes.ok) setOrders(await oRes.json());
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [status]);
 
   function toggleSize(s) {
@@ -544,7 +554,7 @@ export default function AdminPage() {
                 <div className="flex flex-wrap gap-2">
                   {editForm.images.map((url, i) => (
                     <div key={`${url}-${i}`} className="relative h-16 w-16 overflow-hidden rounded-lg border bg-zinc-100">
-                      <img src={url} alt="" className="h-full w-full object-cover" />
+                      <Image src={url} alt="" fill className="object-cover" sizes="64px" unoptimized />
                       <button
                         type="button"
                         onClick={() => removeEditImage(i)}

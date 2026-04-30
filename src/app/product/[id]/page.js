@@ -39,19 +39,33 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!id) return;
-    setLoadError("");
-    setProduct(null);
-    fetch(`/api/products/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
+    let cancelled = false;
+    void (async () => {
+      await Promise.resolve();
+      if (cancelled) return;
+      setLoadError("");
+      setProduct(null);
+      try {
+        const res = await fetch(`/api/products/${id}`);
+        const data = await res.json();
+        if (cancelled) return;
         if (data?.error) {
           setLoadError(data.error);
+          setProduct(null);
           return;
         }
         setProduct(data);
         if (data?.sizes?.[0]) setSize(data.sizes[0]);
-      })
-      .catch(() => setLoadError("Unable to load product"));
+      } catch {
+        if (!cancelled) {
+          setLoadError("Unable to load product");
+          setProduct(null);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   if (!id) {

@@ -64,14 +64,18 @@ export default function Header() {
   const feedActive = !onShopCollection;
 
   useEffect(() => {
-    const preferred = window.localStorage.getItem("sonia_gender_choice");
-    if (preferred && ["Women", "Men", "Kids"].includes(preferred)) {
-      setActiveStrip(preferred);
-    }
+    queueMicrotask(() => {
+      const preferred = window.localStorage.getItem("sonia_gender_choice");
+      if (preferred && ["Women", "Men", "Kids"].includes(preferred)) {
+        setActiveStrip(preferred);
+      }
+    });
   }, []);
 
   useEffect(() => {
-    if (shopParts.cat) setActiveStrip(shopParts.cat);
+    queueMicrotask(() => {
+      if (shopParts.cat) setActiveStrip(shopParts.cat);
+    });
   }, [shopParts.cat]);
 
   return (

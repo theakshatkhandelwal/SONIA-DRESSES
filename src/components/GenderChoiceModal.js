@@ -36,8 +36,10 @@ export default function GenderChoiceModal() {
   const router = useRouter();
 
   useEffect(() => {
-    const existing = window.localStorage.getItem(STORAGE_KEY);
-    if (!existing) setOpen(true);
+    queueMicrotask(() => {
+      const existing = window.localStorage.getItem(STORAGE_KEY);
+      if (!existing) setOpen(true);
+    });
   }, []);
 
   function choose(category) {
