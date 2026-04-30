@@ -1,24 +1,31 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
   async function onSubmit(e) {
     e.preventDefault();
+    setError("");
     const result = await signIn("credentials", {
       email: form.email,
       password: form.password,
       redirect: false,
     });
 
-    if (result?.ok) router.push("/admin");
-    else setError("Invalid login");
+    if (result?.ok) {
+      // Full navigation so the JWT cookie is sent and useSession() sees you on /admin (App Router + client session).
+      window.location.assign("/admin");
+      return;
+    }
+    setError(
+      result?.error === "CredentialsSignin" || !result?.error
+        ? "Invalid login — use the same email/password as ADMIN_EMAIL / ADMIN_PASSWORD in Vercel."
+        : String(result.error)
+    );
   }
 
   return (

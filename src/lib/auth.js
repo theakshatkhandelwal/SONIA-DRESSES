@@ -1,6 +1,7 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   session: { strategy: "jwt" },
   pages: { signIn: "/admin/login" },
   providers: [
@@ -11,14 +12,13 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const adminEmail = process.env.ADMIN_EMAIL;
-        const adminPassword = process.env.ADMIN_PASSWORD;
+        const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+        const adminPassword = process.env.ADMIN_PASSWORD?.trim();
+        const email = credentials?.email?.trim().toLowerCase();
+        const password = credentials?.password?.trim();
 
-        if (!adminEmail || !adminPassword) return null;
-        if (
-          credentials?.email === adminEmail &&
-          credentials?.password === adminPassword
-        ) {
+        if (!adminEmail || !adminPassword || !email || !password) return null;
+        if (email === adminEmail && password === adminPassword) {
           return { id: "admin", name: "Admin", email: adminEmail, role: "admin" };
         }
         return null;
@@ -31,7 +31,7 @@ export const authOptions = {
       return token;
     },
     async session({ session, token }) {
-      session.user.role = token.role;
+      if (session.user) session.user.role = token.role;
       return session;
     },
   },

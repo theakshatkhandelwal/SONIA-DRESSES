@@ -1,6 +1,7 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { CATEGORIES, SUBCATEGORIES, SIZES } from "@/lib/constants";
@@ -149,7 +150,23 @@ export default function AdminPage() {
   }
 
   if (status === "loading") return <p>Loading...</p>;
-  if (!session) return <p>Please login at /admin/login</p>;
+  if (!session) {
+    return (
+      <div className="mx-auto max-w-md space-y-3 rounded-xl border bg-white p-6 text-center">
+        <p className="text-zinc-800">Sign in to manage products and orders.</p>
+        <Link
+          href="/admin/login"
+          className="inline-block rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white"
+        >
+          Go to admin login
+        </Link>
+        <p className="text-xs text-zinc-500">
+          Use the same email and password as <code className="rounded bg-zinc-100 px-1">ADMIN_EMAIL</code> and{" "}
+          <code className="rounded bg-zinc-100 px-1">ADMIN_PASSWORD</code> in Vercel, then redeploy if you changed them.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">

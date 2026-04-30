@@ -80,10 +80,10 @@ export default function Header() {
         New arrivals every week | Stylish looks at affordable prices
       </div>
 
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4">
+      <div className="relative mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4">
         <Link
           href="/"
-          className="flex min-w-0 max-w-[min(78vw,20rem)] shrink-0 items-center gap-2.5 sm:gap-3 md:max-w-none"
+          className="relative z-10 flex min-w-0 max-w-[min(78vw,20rem)] shrink-0 items-center gap-2.5 sm:gap-3 md:max-w-none"
           title="Sonia Dresses — Home"
           aria-label="Sonia Dresses — Home"
         >
@@ -102,7 +102,7 @@ export default function Header() {
           </span>
         </Link>
 
-        <nav className="hidden items-end gap-6 text-sm font-semibold md:flex">
+        <nav className="absolute left-1/2 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 items-end gap-6 text-sm font-semibold md:flex">
           {["Women", "Men", "Kids"].map((category) => (
             <button
               key={category}
@@ -125,7 +125,7 @@ export default function Header() {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-2 text-sm">
+        <div className="relative z-10 flex shrink-0 items-center gap-2 text-sm">
           <Link href="/checkout" className="hidden rounded-full border border-zinc-300 px-3 py-1.5 md:inline-block">
             Checkout
           </Link>
