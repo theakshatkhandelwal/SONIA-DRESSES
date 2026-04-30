@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Sonia Dresses",
+    "slug": "sonia-dresses",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "scheme": "soniadresses",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#fafafa"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.soniadresses.app"
+    },
+    "android": {
+      "package": "com.soniadresses.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
