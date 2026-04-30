@@ -31,7 +31,13 @@ async function uploadFileToCloudinary(file) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ imageBase64: base64 }),
   });
-  const data = await res.json();
+  const raw = await res.text();
+  let data = {};
+  try {
+    data = raw ? JSON.parse(raw) : {};
+  } catch {
+    throw new Error(raw.slice(0, 120) || "Upload failed (invalid response)");
+  }
   if (!res.ok) throw new Error(data.error || "Upload failed");
   return data.url;
 }
